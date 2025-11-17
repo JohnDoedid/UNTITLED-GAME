@@ -1,5 +1,15 @@
 local s = require("soundmod")
 
+local function t(text)
+for i = 1, #text do
+local ch=  text:sub(i,i)
+io.write(ch)
+io.flush()
+local delay = math.random() * 0.1
+os.execute("sleep " .. delay)
+end
+end
+
 local function sleep()
     os.execute("sleep 1.75")
 end
@@ -23,11 +33,12 @@ local function centeredprint(text)
 end
 
 local function asdf()
+    s.antag(1)
     print("Hello!")
-    s.antag(1)
     os.execute("sleep 1")
-    print("What is your name?")
     s.antag(1)
+    print("What is your name?")
+    
     local name = io.read()
     s.player(1)
     sleep()

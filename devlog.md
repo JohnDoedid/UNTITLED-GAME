@@ -27,4 +27,12 @@
 - Added sound effects to the game
 - I'm gonna need help. Coding this is very slow.
 
+--
 
+## November 16, 2025
+### 21:55
+- Finished level three. Made it a cave level instead lol
+- Plans after level 3: the rest of the game. i'm just gonna improvise the whole plot
+- This will be a long journey of develop (might take months or years)
+
+---
