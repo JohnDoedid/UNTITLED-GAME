@@ -36,3 +36,11 @@
 - This will be a long journey of develop (might take months or years)
 
 ---
+
+## November 17, 2025
+### 21:20
+- Revised code
+- Still thinking about the main part...
+- This'll take a lot of brainstorming
+
+---
