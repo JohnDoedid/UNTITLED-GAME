@@ -327,13 +327,27 @@ for line in ascim:gmatch("[^\r\n]+") do
     print(line)
     os.execute("sleep 0.1")  -- delay between lines
 end
+	sleep()
+	s.antag(1)
+	print("YOU ARE CHOSEN TO CONTINUE!!!")
+	sleep()
+	s.antag(1)
+	print("3....")
+	sleep()
+	s.antag(1)
+	print("2....")
+	sleep()
+	s.antag(1)
+	print("1....")
+	sleep()
 elseif not win3.won then
 	os.exit()
 end
 
+dofile("loading.lua")
 
 -- END OF THE GAME PART!!!
-local levels = {win1, win2}  -- add more levels if needed
+local levels = {win1, win2, win3}  -- add more levels if needed
 
 -- Build the summary string
 local summaryText = ""

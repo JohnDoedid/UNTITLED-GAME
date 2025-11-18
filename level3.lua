@@ -6,7 +6,7 @@ math.randomseed(os.time())
 
 -- CONFIG
 local MAP_W, MAP_H = 100, 32
-local FOV_RADIUS = 12
+local FOV_RADIUS = 15
 local INITIAL_HP = 50
 local FLOORS_TO_WIN = 5
 
