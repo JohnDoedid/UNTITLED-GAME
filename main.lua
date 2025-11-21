@@ -1,3 +1,10 @@
+print("Start performance test before playing? 'yes' or 'no'")
+local wpdwoefnwisbfwjhfbwubfh = io.read()
+if wpdwoefnwisbfwjhfbwubfh == "yes" then
+os.execute("luajit tester.lua")
+elseif wpdwoefnwisbfwjhfbwubfh == "no" then
+end
+
 local startTime = os.time()    -- seconds since epoch, used for days/hours/minutes/seconds
 local startClock = os.clock()  -- CPU time in seconds (can get milliseconds)
 local s = require("soundmod")

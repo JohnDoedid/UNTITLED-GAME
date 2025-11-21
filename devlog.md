@@ -44,3 +44,10 @@
 - This'll take a lot of brainstorming
 
 ---
+
+## November 21, 2025
+### 20:28
+- Added benchmarking for performace testswijdbcajdnaoaaskdjsnokon
+- Updated parts of the script
+- Still thinking of the main game.......
+- I should make this stand out so people give me ideas they want :D
