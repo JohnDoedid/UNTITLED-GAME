@@ -108,8 +108,62 @@ end
 
 os.execute("sleep 1")
 
+local elapsed5 = os.clock() - startTime
+
+-- Function to get ordinal suffix
+local function ordinal(n)
+    local lastDigit = n % 10
+    local lastTwoDigits = n % 100
+    if lastTwoDigits >= 11 and lastTwoDigits <= 13 then
+        return "th"
+    elseif lastDigit == 1 then
+        return "st"
+    elseif lastDigit == 2 then
+        return "nd"
+    elseif lastDigit == 3 then
+        return "rd"
+    else
+        return "th"
+    end
+end
+
+-- Function to create nested table
+local function ctd(dep)
+    print("Going " .. dep .. " deep")
+    local t = {}
+    local cur = t
+    for i = 1, dep do
+        cur["T" .. i] = {}
+        cur = cur["T" .. i]
+    end
+    cur.value = "You have reached the " .. dep .. ordinal(dep) .. " nested value"
+    return t
+end
+
+local depth = 99999
+local dt = ctd(depth)
+
+local cure = dt
+for i = 1, depth do
+    cure = cure["T" .. i]
+end
+
+print(cure.value)
+print("Elapsed time for " .. depth .. " nest table: " .. elapsed5)
+if elapsed5 <= 0.05 then
+    print("Description: minimal time for very deep table! NICE")
+elseif elapsed5 > 0.1 then
+    print("Description: best time for deep table! great")
+elseif elapsed5 > 2 then
+    print("Description: average time for deep table! good")
+elseif elapsed5 > 7 then
+    print("Description: slow time for deep tables. might wanna remove some plates")
+elseif elapsed5 > 10 then
+    print("Description: very slow! unepic.")
+end
+
 -- Calculate average performance
-local elapsedTimes = {elapsed1, elapsed2, elapsed3, elapsed4}
+local elapsedTimes = {elapsed1, elapsed2, elapsed3, elapsed4, elapsed5}
 local sum = 0
 for _, t in ipairs(elapsedTimes) do
     sum = sum + t
