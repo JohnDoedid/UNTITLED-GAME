@@ -1,3 +1,4 @@
+--epic
 local startTime = os.time()
 os.execute("ffplay -nodisp -autoexit gamestart.ogg > /dev/null 2>&1")
 local elapsed1 = os.time() - startTime
