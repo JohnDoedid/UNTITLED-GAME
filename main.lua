@@ -351,7 +351,7 @@ elseif not win3.won then
 	os.exit()
 end
 
-dofile("loading.lua")
+dofile("waiter.lua")
 
 -- END OF THE GAME PART!!!
 local levels = {win1, win2, win3}  -- add more levels if needed

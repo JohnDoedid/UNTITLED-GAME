@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORUS</title>
+<style>
+    :root {
+        --bg-color: #fafafa;
+        --text-color: #111;
+        --header-bg: #111;
+        --link-color: #0b3d91;
+        --border-color: #bbb;
+    }
+
+    body {
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-family: "Courier New", Courier, monospace;
+        margin: 0;
+        padding: 0;
+        transition: background 1s ease, filter 0.2s;
+        overflow-x: hidden;
+    }
+
+    /* CRT SCANLINE OVERLAY - Starts invisible, opacity increases with level */
+    body::after {
+        content: " ";
+        display: block;
+        position: fixed;
+        top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        z-index: 9999;
+        background-size: 100% 2px, 3px 100%;
+        pointer-events: none;
+        opacity: var(--crt-opacity, 0.05); /* Dynamic CSS variable */
+        pointer-events: none;
+    }
+
+    header {
+        background: var(--header-bg);
+        color: #fff;
+        padding: 12px;
+        text-align: center;
+        font-size: 32px;
+        border-bottom: 3px solid #444;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        text-shadow: 2px 2px 0px #000;
+    }
+
+    nav {
+        margin-top: 70px;
+        padding: 8px;
+        background: #eee;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+        transition: transform 0.5s;
+    }
+
+    nav a {
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0 12px;
+        color: #222;
+    }
+
+    .container {
+        display: flex;
+        padding: 15px;
+        max-width: 1200px;
+        margin: 0 auto;
+        transition: opacity 1s;
+    }
+
+    .sidebar {
+        width: 230px;
+        margin-right: 20px;
+        background: #f5f5f5;
+        border: 2px solid var(--border-color);
+        padding: 10px;
+        height: fit-content;
+        transition: transform 0.3s;
+    }
+
+    .sidebar h3 { margin-top: 0; border-bottom: 1px solid #aaa; }
+    .sidebar ul { list-style: none; padding-left: 0; }
+    .sidebar li { padding: 4px 0; }
+
+    .forum { flex: 1; }
+
+    .thread {
+        background: #fff;
+        border: 2px solid #999;
+        margin-bottom: 22px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        transition: transform 0.2s, filter 0.2s;
+    }
+
+    .thread-header {
+        background: #ddd;
+        padding: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        border-bottom: 1px solid #999;
+    }
+
+    .post { padding: 10px; border-top: 1px dashed #ccc; }
+    .post-user { font-weight: bold; color: var(--link-color); transition: color 0.3s; }
+    .post-time { float: right; font-size: 12px; color: #666; }
+    .post-content { margin-top: 6px; line-height: 1.4; }
+
+    .quote {
+        background: #f0f0f0;
+        border-left: 3px solid #666;
+        padding: 5px 10px;
+        margin: 6px 0;
+        font-style: italic;
+    }
+
+    .btn { background: #222; color: #fff; padding: 5px 14px; text-decoration: none; font-weight: bold; border: 2px solid #444; margin-top: 6px; display: inline-block; }
+
+    footer {
+        text-align: center;
+        background: #111;
+        color: #fff;
+        padding: 14px;
+        border-top: 3px solid #444;
+        margin-top: 30px;
+    }
+
+    /* --- CORRUPTION STYLES --- */
+    .subtle-skew { transform: rotate(0.5deg); }
+    .medium-skew { transform: skewX(-2deg) rotate(-1deg); filter: blur(0.3px); }
+    
+    .nightmare-mode {
+        filter: invert(100%) hue-rotate(180deg) contrast(1.2);
+    }
+    
+    .text-red { color: #800000 !important; }
+    .text-bleeding { 
+        color: red !important; 
+        text-shadow: 2px 0px 1px black;
+        font-family: monospace; 
+    }
+
+    .shaking { animation: shake 0.15s infinite; }
+
+    @keyframes shake {
+        0% { transform: translate(1px, 1px); }
+        200% { transform: translate(1px, -1px); }
+    }
+</style>
+</head>
+<body>
+
+<header id="mainHeader">--- FORUS ---</header>
+
+<nav id="navBar">
+    <a href="#">[Home]</a>
+    <a href="#" onclick="return false;">[Back]</a>
+    <a href="#">[Threads]</a>
+    <a href="#">[Members]</a>
+    <a href="#" id="payLink">[Pay FORUS subscription bill]</a>
+</nav>
+
+<div class="container" id="mainContainer">
+
+    <div class="sidebar" id="sidebar">
+        <h3>Forum Links</h3>
+        <ul id="linkList">
+            <li><a href="#" target="_blank">Reddit</a></li>
+            <li><a href="#" target="_blank">Stack Overflow</a></li>
+            <li><a href="#" target="_blank">GameFAQs Boards</a></li>
+            <li><a href="#" target="_blank">Smashboards</a></li>
+            <li><a href="#" target="_blank">LinuxQuestions.org</a></li>
+        </ul>
+        <h3>Active Users</h3>
+        <ul id="userList">
+            <li>Admin</li>
+            <li>ForumFanatic</li>
+            <li>CodingWizard</li>
+            <li>GamerGuru</li>
+            <li>LateNightPoster</li>
+        </ul>
+        <h3>Search</h3>
+        <input type="text" placeholder="search threads..." style="width:100%; padding:4px; border:1px solid #ccc;">
+        <a href="#" class="btn">Search</a>
+    </div>
+
+    <div class="forum">
+
+        <div class="thread" id="thread-welcome">
+            <div class="thread-header">Welcome Back to FORUS</div>
+            <div class="post">
+                <div class="post-user">ADMIN <span class="post-time">2026-01-23 18:02</span></div>
+                <div class="post-content">
+                    Other forum websites are boring asf. FORUS is the best
+                    <div class="quote" id="quote-main">“FORUS never dies; It just gets deeper.”</div>
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-user">FORUS_FAN <span class="post-time">2026-01-23 18:12</span></div>
+                <div class="post-content" id="comment-fan">
+                    freaky quote ngl
+                </div>
+            </div>
+        </div>
+
+        <div class="thread" id="thread-coding">
+            <div class="thread-header">Best forum for coding?</div>
+            <div class="post">
+                <div class="post-user">Codercube <span class="post-time">2026-01-23 18:35</span></div>
+                <div class="post-content" id="comment-coder">
+                    personally I use Stack Overflow for technical Q&A and r/programming for discussion. What about you?
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-user">LateNightPoster <span class="post-time">2026-01-23 18:49</span></div>
+                <div class="post-content" id="comment-late">
+                    i like to go to LinuxQuestions.org when I’m fixing stuff, and Boards.ie when i want random chats.
+                </div>
+            </div>
+        </div>
+
+        <div class="thread" id="thread-racing">
+            <div class="thread-header">races</div>
+            <div class="post">
+                <div class="post-user">gamer67 <span class="post-time">2026-01-23 19:05</span></div>
+                <div class="post-content" id="comment-racer">
+                    i found a cool site about racing lmao: OverTake is epic!!!
+                </div>
+            </div>
+        </div>
+
+        <div class="thread" id="thread-corrupt">
+            <div class="thread-header">FORUS is corrupted :(</div>
+            <div class="post">
+                <div class="post-user">LateNightPoster <span class="post-time">2026-01-23 19:20</span></div>
+                <div class="post-content" id="comment-final">
+                    I miss old forums where people were actually nice. What do you miss?!
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<p style="text-align:center; margin-top:40px; margin-bottom: 60px; user-select: none;">
+    <a href="#" id="corruptLink" style="color: #bbb; text-decoration: none; font-weight: bold; font-family: monospace;">
+        [ LOAD MORE THREADS ]
+    </a>
+</p>
+
+<footer>
+    &copy; 1999 - 2026 FORUS INC.
+</footer>
+
+<script>
+    document.querySelector("footer").addEventListener("click", () => {
+        localStorage.setItem("forus_level", 0);
+        location.reload();
+    });
+</script>
+
+<script>
+    /* --- AUDIO ENGINE --- */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playSound(intensity) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        // Intensity 0-3: Static pops. Intensity 4-8: Screeching/Drones.
+        oscillator.type = intensity > 4 ? 'square' : 'sawtooth';
+        
+        // Freq calculation
+        const startFreq = 50 + (intensity * 80);
+        const endFreq = intensity > 4 ? startFreq + Math.random() * 1000 : startFreq;
+
+        oscillator.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
+        if(intensity > 2) {
+            oscillator.frequency.linearRampToValueAtTime(endFreq, audioCtx.currentTime + 0.3);
+        }
+
+        // Volume calculation
+        const vol = 0.02 + (intensity * 0.099);
+        gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.6);
+    }
+
+    /* --- GAME LOGIC --- */
+    
+    // 1. Load State
+    let level = parseInt(localStorage.getItem("forus_level") || "0");
+    const link = document.getElementById("corruptLink");
+    
+    // 2. Apply Visuals based on Level
+    function applyVisuals() {
+        console.log("Current Level:", level);
+        
+        // Set CSS Variable for CRT scanline intensity
+        document.body.style.setProperty('--crt-opacity', 0.05 + (level * 0.05));
+
+        // LEVEL 1: Very Subtle (Typos)
+        if (level >= 1) {
+            document.getElementById("mainHeader").innerText = "--- F0RUS ---";
+            document.title = "FORUS - Connection Unstable";
+        }
+
+        // LEVEL 2: Content Drift (One post changes)
+        if (level >= 2) {
+            document.getElementById("comment-racer").innerText = "i found a cool site about racing... but nobody is online there anymore.";
+            document.getElementById("navBar").classList.add("subtle-skew");
+        }
+
+        // LEVEL 3: Unsettling (User names & Links)
+        if (level >= 3) {
+            const users = document.getElementById("userList").children;
+            users[2].innerText = "Null_User";
+            users[4].innerText = "Watching_You";
+            document.getElementById("payLink").innerText = "[Pay debt with life]";
+            document.body.style.backgroundColor = "#f0f0f0"; // Slightly darker
+        }
+
+        // LEVEL 4: Corruption (Quote change, Sidebar broken)
+        if (level >= 4) {
+            document.getElementById("quote-main").innerText = "“FORUS never dies; It is hungry.”";
+            document.getElementById("sidebar").style.transform = "rotate(2deg)";
+            document.getElementById("sidebar").style.opacity = "0.7";
+            document.getElementById("comment-coder").innerHTML = "personally I use <span class='text-red'>GET_OUT</span> for technical Q&A.";
+        }
+
+        // LEVEL 5: Decay (Threads twisting, text color)
+        if (level >= 5) {
+            document.getElementById("thread-welcome").classList.add("medium-skew");
+            document.getElementById("thread-racing").style.opacity = "0.3";
+            document.getElementById("comment-final").innerHTML = "I miss old forums... <br><br><b>WHY ARE YOU STILL CLICKING?</b>";
+            document.body.style.letterSpacing = "-0.5px";
+        }
+
+        // LEVEL 6: Nightmare (Invert colors, loud visual noise)
+        if (level >= 6) {
+            document.body.classList.add("nightmare-mode");
+            document.querySelectorAll(".post-user").forEach(el => el.innerText = "UNKNOWN");
+            document.getElementById("mainHeader").innerText = "R U N";
+        }
+
+        // LEVEL 7: Chaos (Shaking, Red Text Everywhere)
+        if (level >= 7) {
+            document.body.classList.add("shaking");
+            // Scramble all text content
+            document.querySelectorAll(".post-content").forEach(el => {
+                el.classList.add("text-bleeding");
+                el.innerText = "IT SEES YOU " + Math.random().toString(36).substring(7);
+            });
+            link.innerText = "[ THERE IS NO ESCAPE ]";
+            link.style.color = "red";
+            link.style.fontSize = "20px";
+        }
+
+        // LEVEL 8: THE CHOICE (The penultimate screen)
+        if (level === 8) {
+            document.body.classList.remove("shaking"); // Stop shaking
+            document.body.innerHTML = ""; // Clear DOM
+            document.body.style.backgroundColor = "black"; // Pure void
+            document.body.style.filter = "none";
+            
+            // Create the prompt
+            const div = document.createElement("div");
+            div.style.color = "red";
+            div.style.textAlign = "center";
+            div.style.marginTop = "20%";
+            div.style.fontFamily = "Courier New";
+            div.innerHTML = "<h1>run</h1><p>run</p><br><br>";
+            
+            const finalLink = document.createElement("a");
+            finalLink.href = "#";
+            finalLink.innerText = "[ LOAD MORE THREADS ]";
+            finalLink.style.color = "#444";
+            finalLink.style.textDecoration = "none";
+            finalLink.style.fontSize = "24px";
+            finalLink.style.fontWeight = "bold";
+            
+            // Add click listener to the new link
+            finalLink.addEventListener("click", (e) => {
+                e.preventDefault();
+                playSound(10); // MAX VOLUME
+                setTimeout(() => {
+                    localStorage.setItem("forus_level", 9); // Advance
+                    window.location.href = "void.html"; // BYE BYE
+                }, 2000);
+            });
+            const wer = prompt("We only accept messages from ourselves");
+            if (wer === "John and Alice") {
+            div.appendChild(finalLink);
+            }
+            document.body.appendChild(div);
+        }
+    }
+
+    // 3. Initialize
+    applyVisuals();
+
+    // 4. Click Handler (Only active if level < 8, because level 8 replaces DOM)
+    if (level < 8) {
+        link.addEventListener("click", e => {
+            e.preventDefault();
+            
+            // Play Sound
+            playSound(level + 1);
+            
+            // Wait for sound, then reload/save
+            setTimeout(() => {
+                level++;
+                localStorage.setItem("forus_level", level);
+                location.reload();
+            }, 500);
+        });
+    }
+</script>
+
+</body>
+</html>

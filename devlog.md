@@ -51,3 +51,12 @@
 - Updated parts of the script
 - Still thinking of the main game.......
 - I should make this stand out so people give me ideas they want :D
+
+---
+
+## Febuary 27, 2026
+- I am still thinking of the main game
+- This isn't ready yet
+- I am working on another project, all of this will be connected into on big game...
+
+---

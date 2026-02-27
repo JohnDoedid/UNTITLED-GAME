@@ -1,5 +1,4 @@
--- insane_roguelike.lua
--- Pure Lua terminal roguelike (no external libs). Run with: lua insane_roguelike.lua
+--lua
 
 local s = require("soundmod")
 math.randomseed(os.time())
